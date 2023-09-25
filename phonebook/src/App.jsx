@@ -52,6 +52,19 @@ function App () {
 
   const findDuplicate = (newPerson) => (persons.findIndex((person) => JSON.stringify(person.name) === JSON.stringify(newPerson.name)) === -1)
 
+  const replaceNumber = (newPerson) => {
+    const oldPerson = persons.find((person) => JSON.stringify(person.name) === JSON.stringify(newPerson.name))
+    newPerson.id = oldPerson.id
+    const name = oldPerson.name
+    const message = `${name} is already in the book, replace the old number with new number ?`
+    if (window.confirm(message)) {
+      backend.updateValue(newPerson)
+        .then((response) => {
+          setPersons(persons.map((person) => (person.id === response.id) ? newPerson : person))
+        })
+    }
+  }
+
   const addContact = (event) => {
     event.preventDefault()
 
@@ -60,7 +73,7 @@ function App () {
       number: newNumber
     }
 
-    findDuplicate(newPerson) ? addPerson(newPerson) : alert(`${newName} already exists`)
+    findDuplicate(newPerson) ? addPerson(newPerson) : replaceNumber(newPerson)
     setNewName('')
     setNewNumber('')
   }

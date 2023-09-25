@@ -18,7 +18,6 @@ const deleteValue = (id) => {
 }
 
 const updateValue = (newPerson) => {
-  
   const id = newPerson.id
   const request = axios.put(`http://localhost:3001/persons/${id}`, newPerson)
   return request.then(response => response.data)

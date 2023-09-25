@@ -1,9 +1,10 @@
 /* eslint-disable max-len */
 import { useState, useEffect, React } from 'react'
-import axios from 'axios'
+
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
+import backend from './components/backend'
 
 // eslint-disable-next-line require-jsdoc
 function App () {
@@ -12,16 +13,14 @@ function App () {
   const [newNumber, setNewNumber] = useState('')
   const [searchValue, setsearchValue] = useState('')
 
-  useEffect(
-    () => {
-      axios
-        .get('http://localhost:3001/persons')
-        .then((response) => {
-          setPersons(response.data)
-        })
-    },
+  useEffect(() => {
+    backend.getAll()
+      .then(response => {
+        setPersons(response)
+      })
+  },
 
-    []
+  []
   )
 
   const updateValues = (event) => {
@@ -36,11 +35,19 @@ function App () {
     : persons
 
   const addPerson = (newPerson) => {
-    axios
-      .post('http://localhost:3001/persons', newPerson)
+    backend.addValue(newPerson)
       .then((response) => {
-        setPersons(persons.concat(response.data))
+        setPersons(persons.concat(response))
       })
+  }
+
+  const deletePerson = (id) => {
+    const value = persons.find((person) => person.id === id)
+    const confirmationstring = `delete ${value.name} ?`
+    if (window.confirm(confirmationstring)) {
+      backend.deleteValue(id)
+        .then((response) => setPersons(persons.filter(person => person.id !== id)))
+    }
   }
 
   const findDuplicate = (newPerson) => (persons.findIndex((person) => JSON.stringify(person.name) === JSON.stringify(newPerson.name)) === -1)
@@ -82,7 +89,7 @@ function App () {
 
       <h3>Numbers</h3>
 
-      <Persons filteredValues={filteredValues} />
+      <Persons filteredValues={filteredValues} deletePerson = {deletePerson} />
 
     </div>
   )

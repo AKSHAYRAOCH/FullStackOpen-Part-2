@@ -13,19 +13,25 @@ function App () {
   const [newNumber, setNewNumber] = useState('')
   const [searchValue, setsearchValue] = useState('')
 
+  const handleName = (event) => {
+    setNewName(event.target.value)
+  }
+
+  const handleNumber = (event) => {
+    setNewNumber(event.target.value)
+  }
+
+  const updateValues = (event) => {
+    setsearchValue(event.target.value)
+  }
+
   useEffect(() => {
     backend.getAll()
       .then(response => {
         setPersons(response)
       })
   },
-
-  []
-  )
-
-  const updateValues = (event) => {
-    setsearchValue(event.target.value)
-  }
+  [])
 
   const filteredValues = searchValue
     ? persons.filter(
@@ -67,43 +73,28 @@ function App () {
 
   const addContact = (event) => {
     event.preventDefault()
-
     const newPerson = {
       name: newName,
       number: newNumber
     }
-
     findDuplicate(newPerson) ? addPerson(newPerson) : replaceNumber(newPerson)
     setNewName('')
     setNewNumber('')
   }
 
-  const handleName = (event) => {
-    setNewName(event.target.value)
-  }
-  const handleNumber = (event) => {
-    setNewNumber(event.target.value)
-  }
-
   return (
     <div>
       <h2>Phonebook</h2>
-
       <Filter searchValue={searchValue} updateValues={updateValues} />
-
       <h3>add a new</h3>
-
       <PersonForm
         addContact={addContact}
         newName={newName}
         handleName={handleName}
         handleNumber={handleNumber}
       />
-
       <h3>Numbers</h3>
-
       <Persons filteredValues={filteredValues} deletePerson = {deletePerson} />
-
     </div>
   )
 }

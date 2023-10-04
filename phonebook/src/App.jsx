@@ -1,6 +1,5 @@
 /* eslint-disable max-len */
 import { useState, useEffect, React } from 'react'
-
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
@@ -82,6 +81,15 @@ function App () {
           }
           , 3000)
         }
+        ).catch(() => {
+          setErrorMessage(`${name} has already been deleted from the server`)
+          setTimeout(
+            () => {
+              setErrorMessage(null)
+            }, 3000
+          )
+        }
+
         )
     }
   }

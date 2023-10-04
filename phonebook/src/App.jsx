@@ -5,6 +5,7 @@ import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
 import backend from './components/backend'
+import Notification from './components/Notification'
 
 // eslint-disable-next-line require-jsdoc
 function App () {
@@ -12,6 +13,7 @@ function App () {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchValue, setsearchValue] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const handleName = (event) => {
     setNewName(event.target.value)
@@ -44,6 +46,12 @@ function App () {
     backend.addValue(newPerson)
       .then((response) => {
         setPersons(persons.concat(response))
+      }).then(() => {
+        setErrorMessage(`${newPerson.name} has been added`)
+
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 3000)
       })
   }
 
@@ -67,7 +75,14 @@ function App () {
       backend.updateValue(newPerson)
         .then((response) => {
           setPersons(persons.map((person) => (person.id === response.id) ? newPerson : person))
-        })
+        }).then(() => {
+          setErrorMessage(`${name} number has been updated`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }
+          , 3000)
+        }
+        )
     }
   }
 
@@ -86,6 +101,7 @@ function App () {
     <div>
       <h2>Phonebook</h2>
       <Filter searchValue={searchValue} updateValues={updateValues} />
+      <Notification errorMessage = {errorMessage} />
       <h3>add a new</h3>
       <PersonForm
         addContact={addContact}
